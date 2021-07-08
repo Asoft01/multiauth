@@ -1,0 +1,12 @@
+composer require laravel/jetstream
+php artisan jetstream:install livewire
+npm install && npm run dev
+
+########## To Update the profile picture which is yet to update #############
+Try and update the .env file 
+APP_URL=http://127.0.0.1:7000
+
+Then run php artisan storage:link
+
+php artisan make:controller AdminController
+php artisan make:model Admin -m
