@@ -10,3 +10,55 @@ Then run php artisan storage:link
 
 php artisan make:controller AdminController
 php artisan make:model Admin -m
+
+php artisan make:seeder UserSeeder
+php artisan make:factory AdminFactory
+php artisan migrate --seed
+
+############################# Guards ########################
+C:\xampp20\htdocs\laravel8\multiauth\config\auth.php
+
+Guards 
+
+C:\xampp20\htdocs\laravel8\multiauth\config\auth.php
+
+C:\xampp20\htdocs\laravel8\multiauth\vendor\laravel\fortify\src\Http\Controllers\AuthenticatedSessionController.php
+
+C:\xampp20\htdocs\laravel8\multiauth\vendor\laravel\framework\src\Illuminate\Contracts\Auth\StatefulGuard.php
+
+C:\xampp20\htdocs\laravel8\multiauth\app\Providers\FortifyServiceProvider.php
+
+Then Add this under the register method
+ $this->app->when([AdminController::class, AttemptToAuthenticate::class, RedirectIfTwoFactorAuthenticatable::class])
+        ->needs(StatefulGuard::class)
+        ->give(function(){
+            return Auth::guard('admin');
+        });
+
+
+Then Create Another Guards files called AdminStatefulGuard.php in app folder and another folder Guards 
+C:\xampp20\htdocs\laravel8\multiauth\app\Guards\AdminStatefulGuard.php
+
+Copy all the code in 
+C:\xampp20\htdocs\laravel8\multiauth\vendor\laravel\fortify\src\Http\Controllers\AuthenticatedSessionController.php
+
+and Paste it in AdminController
+
+Then create a middleware and called the folder LoginResponse 
+C:\xampp20\htdocs\laravel8\multiauth\app\Http\Responses\LoginResponse.php
+
+Under the web.php
+
+
+Route::group(['prefix' => 'admin', 'middleware' => ['admin:admin']], function() {
+    Route::get('/login', [AdminController::class, 'loginForm']);
+    Route::post('/login', [AdminController::class, 'store'])->name('admin.login');
+});
+
+Route::middleware(['auth:sanctum,admin', 'verified'])->get('/admin/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+
+Route::middleware(['auth:sanctum,web', 'verified'])->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
